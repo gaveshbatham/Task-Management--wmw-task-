@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import connectDB from "./config/db.js"
 
 import userRoute from './routers/user.js'
+import taskRoute from './routers/task.js'
 
 dotenv.config();
 connectDB();
@@ -19,6 +20,7 @@ app.get('/', (req,res)=>{
 
 
 app.use('/user' , userRoute)
+app.use('/task' , taskRoute)
 
 
 app.listen(PORT, ()=>{

@@ -3,6 +3,11 @@ import dotenv from 'dotenv'
 import connectDB from "./config/db.js"
 
 import userRoute from './routers/user.js'
+import taskRoute from './routers/task.js'
+
+import { login } from './controller/login.js'
+
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 connectDB();
@@ -18,7 +23,10 @@ app.get('/', (req,res)=>{
 })
 
 
-app.use('/user' , userRoute)
+app.get("/login" , login )
+
+app.use('/user' ,authMiddleware, userRoute)
+app.use('/task' ,authMiddleware, taskRoute)
 
 
 app.listen(PORT, ()=>{

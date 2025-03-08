@@ -6,7 +6,7 @@ async function add_new_task(req, res) {
     const { title, description, dueDate, status, assignedTo, assignedBy } =
       req.body;
 
-      const token = req.header("Authorization");
+      const token = req.cookies.Authorization;
    
   
       console.log(req.body)
@@ -49,7 +49,7 @@ async function add_new_task(req, res) {
 
   async function update_task(req, res) {
     const { _id, title, description, dueDate, status, assignedTo, assignedBy } = req.body;
-    const {token}=req.header("Authorization")?.split(" ")[0];
+    const token=req.cookies.Authorization;
     
     if (!_id) {
       return res.status(400).json({ success: false, message: "Task ID (_id) is required" });
@@ -90,7 +90,7 @@ async function add_new_task(req, res) {
   
   async function delete_task(req, res) {
     const { _id } = req.params;
-    const token = req.header("Authorization");
+    const token = req.cookies.Authorization;
   
     if (!_id) {
       return res.status(400).json({ success: false, message: "Task ID (_id) is required" });

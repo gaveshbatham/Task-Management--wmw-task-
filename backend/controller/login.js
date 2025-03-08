@@ -37,7 +37,11 @@ export async function login(req, res) {
       { expiresIn: "1h" }
     );
 
-    res.json({ success: true, message: "Login successful", token });
+    // res.json({ success: true, message: "Login successful", token });
+
+    res.cookie("Authorization" , token,{
+      httpOnly:true,
+    }).json({ success: true, message: "Login successful", token });
 
     // Send login notification email with device info
     const mailData = {

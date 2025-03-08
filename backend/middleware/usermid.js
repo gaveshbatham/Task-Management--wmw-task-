@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 function onlyAdmin(req, res, next) {
-    const token = req.header("Authorization")?.split(" ")[0]; // Extract token
+    const token = req.cookies.Authorization; // Extract token
     console.log(token)
 
     if (!token) {
@@ -23,7 +23,7 @@ function onlyAdmin(req, res, next) {
 }
 
 function user_or_admin(req, res, next) {
-    const token = req.header("Authorization")?.split(" ")[0]; // Extract token
+    const token = req.cookies.Authorization; // Extract token
     const { email } = req.params; // Get email from request params
 
     if (!token) {

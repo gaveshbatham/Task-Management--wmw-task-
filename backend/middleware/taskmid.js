@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import Task from "../model/task.js"
 
 function assignedTo_check(req,res,next){
-    const {token}=req.header("Authorization")?.split(" ")[0];
+    const token=req.cookies.Authorization;
     const {assignedTo} = req.body 
 
     if (!token) {
@@ -27,7 +27,7 @@ function assignedTo_check(req,res,next){
 
 
 function user_or_admin(req, res, next) {
-    const token = req.header("Authorization")?.split(" ")[0]; // Extract token
+    const token = req.cookies.Authorization; // Extract token
     const { email } = req.params; // Get email from request params
 
     if (!token) {

@@ -2,7 +2,8 @@ import jwt from "jsonwebtoken";
 
 
 export function authMiddleware(req, res, next) {
-  const token = req.header("Authorization");
+  const token = req.cookies.Authorization;
+  console.log(req.headers)
 
   if (!token) {
     return res.status(401).json({ success: false, message: "Access denied. No token provided." });
@@ -13,6 +14,6 @@ export function authMiddleware(req, res, next) {
     // Attach user details (email, role) to request object
     next();
   } catch (error) {
-    res.status(403).json({ success: false, message: "Invalid token---" });
+    res.status(403).json({ success: false, message: "Invalid token" });
   }
 }

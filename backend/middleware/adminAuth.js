@@ -1,6 +1,7 @@
 
 export function AdminAuth(req,res,next){
-    const token = req.header("Authorization");
+    const token = req.cookies.Authorization;
+    console.log(token)
     const {email} = req.body;
     const {assignedTo} = req.body;
 

@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import connectDB from "./config/db.js"
+import cookieParser from "cookie-parser";
 
 import userRoute from './routers/user.js'
 import taskRoute from './routers/task.js'
@@ -17,6 +18,7 @@ connectDB();
 const app= express();
 const PORT= process.env.PORT || 5000
 
+app.use(cookieParser()); 
 
 const corsOptions = {
     origin: [process.env.FRONTEND_LINK], // Allowed domains

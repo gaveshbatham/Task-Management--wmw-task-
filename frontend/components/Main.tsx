@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 
 export const Main =() =>{
@@ -9,10 +10,10 @@ export const Main =() =>{
                 <div className="bg-white p-6 mt-5 shadow-md rounded-lg text-center">
                   <h2 className="text-lg font-semibold">Focus on your day</h2>
                   <p className="text-gray-500">Get things done with Clone-do.</p>
-                  <button 
+                  <Link href="/dashboard/addtask"><button 
                     className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                     Add your first task
-                  </button>
+                  </button></Link>
                 </div>
                 
                 <div className="mt-5 flex items-center space-x-2">

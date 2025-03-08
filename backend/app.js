@@ -9,11 +9,21 @@ import { login } from './controller/login.js'
 
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
+import cors from 'cors'
+
+
 dotenv.config();
 connectDB();
 const app= express();
 const PORT= process.env.PORT || 5000
 
+
+const corsOptions = {
+    origin: [process.env.FRONTEND_LINK], // Allowed domains
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization"
+  };
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 

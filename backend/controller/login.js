@@ -41,7 +41,7 @@ export async function login(req, res) {
 
     // Send login notification email with device info
     const mailData = {
-      to: "idcoursera9@gmail.com",
+      to: email,
       subject: "New Login Detected",
       text: `Hello ${user.name},\n\nYour account was just logged into from:\n📱 Device: ${deviceInfo}\n🕒 Time: ${new Date().toLocaleString()}`
     };

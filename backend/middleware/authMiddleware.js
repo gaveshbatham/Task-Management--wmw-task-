@@ -10,9 +10,9 @@ export function authMiddleware(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
-    req.user = decoded; // Attach user details (email, role) to request object
+    // Attach user details (email, role) to request object
     next();
   } catch (error) {
-    res.status(403).json({ success: false, message: "Invalid token" });
+    res.status(403).json({ success: false, message: "Invalid token---" });
   }
 }

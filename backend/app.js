@@ -27,6 +27,8 @@ app.get("/login" , login )
 
 app.use('/user' ,authMiddleware, userRoute)
 app.use('/task' ,authMiddleware, taskRoute)
+// app.use('/user' , userRoute)
+// app.use('/task' , taskRoute)
 
 
 app.listen(PORT, ()=>{

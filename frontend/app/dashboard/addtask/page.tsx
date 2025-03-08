@@ -1,13 +1,19 @@
-import { Button } from "./ui/button"
-import { Card, CardContent } from "./ui/card"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
-import { Textarea } from "./ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import  Link  from "next/link"
 
 
 const AddTask = () => {
   return (
-    <div className="min-h-screen min-w-screen">
+    <div className="flex flex-col items-center justify-center h-[70%] w-[100%]">
+        <div className="bg-[#fff] relative top-[-2.45rem] w-[100%] border p-3 flex justify-between">
+          <div className="text-2xl cursor-default">Create your Task</div>
+          <Link href="/dashboard"><Button className="bg-blue-600">Go to tasks</Button></Link>
+        </div>
+        <div className="w-[50%]">
          <Card>
             <CardContent>
               <form className="space-y-4">
@@ -31,6 +37,7 @@ const AddTask = () => {
               </form>
             </CardContent>
           </Card>
+        </div>  
     </div>
   )
 }

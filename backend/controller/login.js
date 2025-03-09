@@ -42,7 +42,7 @@ export async function login(req, res) {
     res.cookie("Authorization" , token,{
       httpOnly:true,sameSite: "strict", // Prevent CSRF attacks
       path: "/",
-    }).json({ success: true, message: "Login successful", token });
+    }).json({ success: true, message: "Login successful", token, user });
 
     // Send login notification email with device info
     const mailData = {

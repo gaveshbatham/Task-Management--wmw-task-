@@ -1,7 +1,6 @@
-"use server"; // Marks this function as a server action
-
 import { signupInfoSchema } from "@/utils/formValidation";
 import axios from "axios";
+import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
 export const signupUser = async (prevState: any, formData: FormData) => {
@@ -14,10 +13,11 @@ export const signupUser = async (prevState: any, formData: FormData) => {
     console.log("Validated Data:", validatedData);
 
     // Make API request
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/add`, validatedData);
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/user/add`, validatedData);
 
     if (response.data.success) {
       toast("Signup successful!");
+      redirect("/login")
     } else {
       return { success: null, error: response.data.message || "Signup failed" };  //fix this
     }

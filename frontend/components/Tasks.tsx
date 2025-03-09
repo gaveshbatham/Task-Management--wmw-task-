@@ -1,5 +1,4 @@
 "use client" 
-import { getTasks } from '@/hooks/getTask'
 import { addTask } from '@/redux/taskSlice'
 import axios from 'axios'
 import React, { useEffect } from 'react'
@@ -9,7 +8,10 @@ import { useDispatch, useSelector } from 'react-redux'
 
 const Tasks = () => {
     useEffect(() => {
-      getTasks()
+      const user = useSelector((state:any) => state.user)
+      const dispatch = useDispatch()
+      const response:any = axios.get(`${process.env.NEXT_PUBLIC_ROUTE}/task/one/${user.email}`)
+      dispatch(addTask(response.data))
     },[]) 
     const tasks = useSelector((state:any) => state.task.tasks)
 

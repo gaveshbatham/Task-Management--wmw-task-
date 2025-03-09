@@ -1,44 +1,43 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface UserState {
-  _id: string;
+// User interface
+export interface User {
+  id: string;
   name: string;
   email: string;
   password: string;
-  profilePhoto: string;
+  role: 'admin' | 'user';
+  profilePhoto?: string;
+  verified: boolean;
+}
+
+interface UserState {
+  user: User | null; // Null means no user is logged in/selected
 }
 
 const initialState: UserState = {
-  _id: '',
-  name: '',
-  email: '',
-  password: '',
-  profilePhoto: '',
+  user: null,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<UserState>) {
-      const { _id, name, email, password, profilePhoto } = action.payload;
-      state._id = _id;
-      state.name = name;
-      state.email = email;
-      state.password = password;
-      state.profilePhoto = profilePhoto;
+    // Set the current user (e.g., after login)
+    setUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
     },
 
-    clearUser(state) {
-      state._id = '';
-      state.name = '';
-      state.email = '';
-      state.password = '';
-      state.profilePhoto = '';
+    // Clear the current user (e.g., logout)
+    clearUser: (state) => {
+      state.user = null;
     },
 
-    updateUserDetails(state, action: PayloadAction<Partial<UserState>>) {
-      Object.assign(state, action.payload);
+    // Update fields of the current user
+    updateUserDetails: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        Object.assign(state.user, action.payload);
+      }
     },
   },
 });

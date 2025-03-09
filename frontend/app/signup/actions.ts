@@ -1,41 +1,33 @@
-import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "@/redux/userSlice";
-import { signupInfoSchema } from "@/utils/formValidation";
-import axios from "axios"
+"use server"; // Marks this function as a server action
 
-// const user = useSelector((state:any) => state.user.user);
-// const dispatch = useDispatch()
-export const  getValue = async (formData: FormData): Promise<void> => {
-  const data = {
-    name : formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    profilePhoto: formData.get("photo"),
-    role: formData.get("role")
-  }
+import { signupInfoSchema } from "@/utils/formValidation";
+import axios from "axios";
+import { toast } from "sonner";
+
+export const signupUser = async (prevState: any, formData: FormData) => {
+  // Convert FormData into a plain object
+  const data = Object.fromEntries(formData.entries());
 
   try {
+    // Validate input using Zod schema
     const validatedData = signupInfoSchema.parse(data);
+    console.log("Validated Data:", validatedData);
 
-    const response = await axios.post(`http://localhost:5000/user/add`,validatedData)
-    // dispatch(setUser(data))
-    // console.log(user)
+    // Make API request
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/add`, validatedData);
 
-    console.log(validatedData, response.data)
-    return
+    if (response.data.success) {
+      toast("Signup successful!");
+    } else {
+      return { success: null, error: response.data.message || "Signup failed" };  //fix this
+    }
   } catch (error: any) {
-    const zodError = { ...error };
-    console.log("validation errors: ", zodError.issues);
-    const pull = (zodError.issues.map((err:any) => err.message));
-    pull.map((err:string) => toast(err))
-    return
-  }  
-}
+    if (error.name === "ZodError") {
+      const pull = error.issues.map((err: any) => err.message)
+      pull.map((err:string) => toast(err))
+    }
 
-// export const handleLogout = () => {
-//   localStorage.removeItem();
-//   localStorage.removeItem();
-//   window.location.href = "http://localhost:3000/";
-//   toast("you have logged out")
-// };
+    const miss = error.response?.data?.message || "Something went wrong";
+    toast(miss)
+  }
+};

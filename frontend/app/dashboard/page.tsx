@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import React from 'react'
 
 const page = async() => {
-  // const response = await fetch(('http://localhost:5000/task/add'),{
+  // const response = await fetch((`${NEXT_PUBLIC_ROUTE}/task/add`),{
   //   method: "POST",
   //   headers: {
   //     'Content-Type': 'application/json',

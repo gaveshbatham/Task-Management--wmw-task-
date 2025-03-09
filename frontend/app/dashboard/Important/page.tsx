@@ -4,7 +4,7 @@ import { FaRegStar } from "react-icons/fa";
 
 const page = () => {
     
-        return ( <main className="flex-1 p-10">
+        return ( <main className="flex-1 p-10 max-w-[77.5rem]">
                     <h1 className="text-3xl font-semibold"><FaRegStar className='inline mr-2 relative top-[-0.3rem]'/>Important</h1>
                     <div className="mt-5 flex items-center space-x-2">
                       <input 

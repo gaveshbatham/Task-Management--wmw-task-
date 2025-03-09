@@ -22,4 +22,10 @@ const taskSchema = z.object({
   }, { message: "Due date must be a future date" }),
 });
 
-export {signupInfoSchema, loginInfoSchema, taskSchema}
+ const editInfoSchema=z.object({
+  name:z.string().nonempty({message:'name is required'}).regex(/^[A-Za-z ]+$/,{message:"Full name can contain only uppercase,lowercase characters and spaces"}),
+  email:z.string().nonempty({message:"email is required!"}).email({message:"Invalid email!"}),
+  password:z.string().nonempty({message:'password is required'}).min(6,{message:"password must be atleast 6 characters long"})
+ })
+
+export {signupInfoSchema, loginInfoSchema, taskSchema, editInfoSchema}

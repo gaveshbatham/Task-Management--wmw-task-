@@ -5,7 +5,7 @@ import Tasks from "./Tasks";
 
 export const Main =() =>{
 
-    return ( <main className="flex-1 p-10">
+    return ( <main className="flex-1 p-10 py-4 max-w-[77.5rem]">
                 <h1 className="text-3xl font-semibold">My Day</h1>
                 <p className="text-gray-500">Thursday, 6 March</p>
         

@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/userSlice";
 import { signupInfoSchema } from "@/utils/formValidation";
+import axios from "axios"
 
 // const user = useSelector((state:any) => state.user.user);
 // const dispatch = useDispatch()
@@ -10,24 +11,18 @@ export const  getValue = async (formData: FormData): Promise<void> => {
     name : formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-    photo: formData.get("photo"),
+    profilePhoto: formData.get("photo"),
     role: formData.get("role")
   }
 
   try {
     const validatedData = signupInfoSchema.parse(data);
 
-    const response = await fetch(`http://localhost:5000/user/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(validatedData),
-    })
+    const response = await axios.post(`http://localhost:5000/user/add`,validatedData)
     // dispatch(setUser(data))
     // console.log(user)
 
-    console.log(response)
+    console.log(validatedData, response.data)
     return
   } catch (error: any) {
     const zodError = { ...error };

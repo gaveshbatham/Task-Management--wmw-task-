@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaRegStar, FaStar } from "react-icons/fa";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import Tasks from "./Tasks";
 
 export const Main =() =>{
 
@@ -26,12 +28,7 @@ export const Main =() =>{
                     <FaSearch />
                   </button>
                 </div>
-        
-                <ul className="mt-4 space-y-2">
-                  {/* {tasks.map((task, index) => (
-                    <li key={index} className="bg-white p-3 shadow rounded-md">{task}</li>
-                  ))} */}
-                </ul>
+                <Tasks/>   
             </main>
     )        
 }

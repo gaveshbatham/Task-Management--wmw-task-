@@ -1,7 +1,7 @@
-import Users from "../model/user";
+import Users from "../model/user.js";
 import jwt from "jsonwebtoken";
 
-async function verify(req, res) {
+async function verify_email(req, res) {
   const { token } = req.params;
 
   if(!token){
@@ -102,4 +102,4 @@ async function verify(req, res) {
   }
 }
 
-export { verify };
+export { verify_email };

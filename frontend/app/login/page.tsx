@@ -10,7 +10,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { loginUser } from "./actions";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, User } from "../../redux/userSlice"
+import { setUser, UserState } from "../../redux/userSlice"
 
 export default function Login() {
   type Role = "admin" | "user";
@@ -29,23 +29,12 @@ export default function Login() {
   };
   
   const dispatch = useDispatch()
-
+  const user = useSelector((state: UserState) => state.user)
   useEffect(() => {
-    "use client"
     if(state.success){
-      dispatch(setUser(state.user))
-
+      console.log(state.user)
     }
     if(state.user){
-      const user = useSelector((state: User) => {
-        state.id,
-        state.name,
-        state.email,
-        state.password,
-        state.profilePhoto,
-        state.role,
-        state.verified
-    })
       console.log(user)
     }
   },[state])

@@ -18,7 +18,7 @@ export default function Home() {
             </p>
           
             <div className="flex gap-4">
-              <Link href="/login"><Button type="submit" variant="ghost" className="hover:bg-[#d3d0d0]">Login</Button></Link>
+              <form action={async() => { 'use server'; await redirect('/login')}}><Button type="submit" variant="ghost" className="hover:bg-[#d3d0d0]">Login</Button></form>
               <Link href="/signup"><Button type="submit" className="bg-blue-600 text-white">Sign up – it's free!</Button></Link>
             </div>
           </div>  

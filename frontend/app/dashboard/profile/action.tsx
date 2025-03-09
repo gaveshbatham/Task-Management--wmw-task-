@@ -19,7 +19,7 @@ export const editUser = async (prevState: any, formData: FormData) => {
     console.log("Validated Data:", validatedData);
     
     // Make API request
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/update/${user.email}`, validatedData, {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/task/update/${user.email}`, validatedData, {
       withCredentials: true,
     });
 

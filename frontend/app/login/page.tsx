@@ -1,5 +1,5 @@
 "use client"; 
-import { useState , useTransition } from "react";
+import { useEffect, useState , useTransition } from "react";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { loginUser } from "./actions";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, User } from "../../redux/userSlice"
 
 export default function Login() {
   type Role = "admin" | "user";
@@ -25,6 +27,28 @@ export default function Login() {
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput({ ...input,[e.target.name] : e.target.value });
   };
+  
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    "use client"
+    if(state.success){
+      dispatch(setUser(state.user))
+
+    }
+    if(state.user){
+      const user = useSelector((state: User) => {
+        state.id,
+        state.name,
+        state.email,
+        state.password,
+        state.profilePhoto,
+        state.role,
+        state.verified
+    })
+      console.log(user)
+    }
+  },[state])
 
   return (
     <div className=" flex flex-col gap-12 bg-[#f3f2f2] min-h-screen">

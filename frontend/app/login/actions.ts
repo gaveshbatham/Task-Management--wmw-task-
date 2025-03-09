@@ -1,38 +1,29 @@
 import { loginInfoSchema } from "@/utils/formValidation";
+import axios from "axios";
 import { toast } from "sonner";
 import axios from "axios";
 
-export const loginUser = async (formData: FormData): Promise<void> => {
-
-
-  // Convert FormData to an object
-  const data = Object.fromEntries(formData.entries());
-
-  console.log("Processed FormData -->", data); // Now it will log correctly
-
-  try {
-    // Validate input using Zod schema
-    const validatedData = data;
-    // const validatedData = loginInfoSchema.parse(data);
-
-    // Make API request
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/login`, validatedData, {
-      withCredentials: true, 
-    });
-
-    toast.success("Login successful!");
-    console.log("API Response:", response.data);
-
-    return response.data;
-  } catch (error: any) {
-    if (error.name === "ZodError") {
-      console.log("Validation errors:", error.issues);
-      error.issues.forEach((err: any) => toast.error(err.message));
-      return;
+export const  loginUser = async (formData: FormData): Promise<void> => {
+    const data = {
+      email: formData.get("email"),
+      password: formData.get("password"),
+      role: formData.get("role")
     }
-
-    console.error("Login error:", error.response?.data?.message || "Something went wrong");
-    toast.error(error.response?.data?.message || "Login failed");
+  
+    try {
+      const  validatedData = loginInfoSchema.parse(data);
+  
+      const response = await axios.post('http://localhost:5000/login',validatedData,{
+        withCredentials: true
+      })
+      // if(!response.data.success){}
+      // console.log(response.data)
+      return
+    } catch (error: any) {
+      const zodError = { ...error };
+      console.log("validation errors: ", zodError.issues);
+      const pull = (zodError.issues.map((err:any) => err.message));
+      pull.map((err:string) => toast(err))
+      return
+    }  
   }
-};
-

@@ -21,7 +21,7 @@ const PORT= process.env.PORT || 5000
 app.use(cookieParser()); 
 
 const corsOptions = {
-    origin: [process.env.FRONTEND_LINK], // Allowed domains
+    origin: [process.env.FRONTEND_LINK],
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization"
   };
@@ -37,7 +37,7 @@ app.get('/', (req,res)=>{
 
 app.post("/login" , login )
 
-app.use('/user' ,authMiddleware, userRoute)
+app.use('/user', userRoute)
 app.use('/task' ,authMiddleware, taskRoute)
 // app.use('/user' , userRoute)
 // app.use('/task' , taskRoute)

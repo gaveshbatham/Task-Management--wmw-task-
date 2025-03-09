@@ -11,7 +11,7 @@ export interface User {
   verified: boolean;
 }
 
-interface UserState {
+export interface UserState {
   user: User | null; // Null means no user is logged in/selected
 }
 

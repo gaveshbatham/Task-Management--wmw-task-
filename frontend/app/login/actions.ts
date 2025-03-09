@@ -3,6 +3,7 @@
 import { loginInfoSchema } from "@/utils/formValidation";
 import axios from "axios";
 import { cookies } from "next/headers"; // For setting cookies in a server action
+import { toast } from "sonner";
 
 export const loginUser = async (prevState: any, formData: FormData) => {
   // Convert FormData into a plain object
@@ -14,7 +15,7 @@ export const loginUser = async (prevState: any, formData: FormData) => {
     console.log("✅ Validated Data:", validatedData);
 
     // Make API request
-    const response = await axios.post("http://localhost:5000/login", validatedData, {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/login`, validatedData, {
       withCredentials: true,
     });
 
@@ -28,15 +29,18 @@ export const loginUser = async (prevState: any, formData: FormData) => {
         path: "/",
       });
 
-      return { success: "Login successful!", error: null };
+      toast("Login successful!")
     } else {
+      toast(response.data.message || "Login failed")
       return { success: null, error: response.data.message || "Login failed" };
     }
   } catch (error: any) {
     if (error.name === "ZodError") {
-      return { success: null, error: error.issues.map((err: any) => err.message).join(", ") };
+      const pull = error.issues.map((err: any) => err.message)
+      pull.map((err:string) => toast(err))
     }
 
-    return { success: null, error: error.response?.data?.message || "Something went wrong" };
+    const miss = error.response?.data?.message || "Something went wrong";
+    toast(miss)
   }
 };

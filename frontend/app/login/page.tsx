@@ -9,13 +9,11 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { loginUser } from "./actions";
-import { toast } from "sonner";
 
 export default function Login() {
   type Role = "admin" | "user";
   
   type InputState = {
-    photo?: File,
     role?: Role
   };
   const [state, formAction] = useActionState(loginUser,{error:null,success:null});

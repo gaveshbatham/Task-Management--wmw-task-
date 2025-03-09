@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Button } from '@/components/ui/button';
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -17,8 +18,8 @@ export default function Home() {
             </p>
           
             <div className="flex gap-4">
-              <form action={async() => { 'use server'; await redirect('/login')}}><Button type="submit" variant="ghost" className="hover:bg-[#d3d0d0]">Login</Button></form>
-              <form action={async() => { 'use server'; await redirect('/signup')}}><Button type="submit" className="bg-blue-600 text-white">Sign up – it's free!</Button></form>
+              <Link href="/login"><Button type="submit" variant="ghost" className="hover:bg-[#d3d0d0]">Login</Button></Link>
+              <Link href="/signup"><Button type="submit" className="bg-blue-600 text-white">Sign up – it's free!</Button></Link>
             </div>
           </div>  
           <div className="mt-20 ml-10 shadow-none">

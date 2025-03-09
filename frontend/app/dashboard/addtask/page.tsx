@@ -4,9 +4,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import  Link  from "next/link"
+import { useActionState } from "react"
+import { getTask } from "./action"
 
 
 const AddTask = () => {
+
+   const [state, formAction] = useActionState(getTask,{error:null,success:null})
+
   return (
     <div className="flex flex-col items-center justify-center h-[70%] w-[100%]">
         <div className="bg-[#fff] relative top-[-4.5rem] w-[100%] border p-3 flex justify-between">
@@ -16,7 +21,7 @@ const AddTask = () => {
         <div className="w-[50%]">
          <Card>
             <CardContent>
-              <form className="space-y-4">
+              <form className="space-y-4" action={formAction}>
                 <div>
                   <Label htmlFor="title">Title</Label>
                   <Input id="title" name="title" required />

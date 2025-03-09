@@ -1,11 +1,11 @@
 "use client" 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { getValue } from "./actions";
+import { signupUser } from "./actions";
 import Navbar from "@/components/Navbar";
 
 export default function Signup() {
@@ -15,6 +15,9 @@ export default function Signup() {
     photo?: File,
     role?: Role
   };
+
+  const [state, formAction] = useActionState(signupUser,{error:null,success:null});
+
   const [showPassword, setShowPassword] = useState(false);
   const [selected, setSelected] = useState<Role>("user");
   const [input, setInput] = useState<InputState>({});
@@ -36,7 +39,7 @@ export default function Signup() {
         <div className="flex flex-col items-center justify-center max-w-7xl mx-auto my-auto">
           <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
           <div className="relative font-bold text-3xl text-center mb-4">Signup</div>
-            <form className="space-y-4 flex flex-col items-center" action={getValue}>
+            <form className="space-y-4 flex flex-col items-center" action={formAction}>
               <div className="flex border border-gray-300 rounded-lg overflow-hidden mb-12 w-[9rem] self-center">
                 {(["admin", "user"] as Role[]).map((role) => (
                   <label

@@ -128,18 +128,34 @@ async function add_new_task(req, res) {
     }
   }
 
-async function get_task_by_email(req,res) {
-    const {email} =  req.params;
-    try{
-        const result = await Task.find({email})
-        res.json({
-            success: true, message: `all tasks of - ${email}`, result
-        })
-    }catch (err) {
-        res.status(500).json({ success: false, message: `Error findg task of ${email}`, error: err.message });
-      }
-}
+  async function get_task_by_email(req, res) {
+    const { email } = req.params; 
+    let { page, limit } = req.query;
 
+    try {
+       
+        page = parseInt(page, 10) || 1;
+        limit = parseInt(limit, 10) || 5;
+        const skip = (page - 1) * limit; 
+
+      
+        const result = await Task.find({ assignedTo: email }).skip(skip).limit(limit);
+
+        res.json({
+            success: true,
+            message: `Tasks assigned to ${email} (Page ${page})`,
+            result,
+            page,
+            limit,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Error fetching tasks for ${email}`,
+            error: err.message,
+        });
+    }
+}
   
 
 export { add_new_task , update_task , delete_task ,get_task_by_email };

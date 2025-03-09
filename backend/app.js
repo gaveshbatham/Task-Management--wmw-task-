@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 import userRoute from './routers/user.js'
 import taskRoute from './routers/task.js'
 
-import { login } from './controller/login.js'
+import { login  } from './controller/login.js'
+import {verify} from "./controller/verify.js"
 
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
@@ -36,6 +37,7 @@ app.get('/', (req,res)=>{
 
 
 app.post("/login" , login )
+app.get("/verify/:token" , verify)
 
 app.use('/user', userRoute)
 app.use('/task' ,authMiddleware, taskRoute)

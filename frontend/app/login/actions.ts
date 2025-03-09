@@ -11,7 +11,7 @@ export const loginUser = async (prevState: any, formData: FormData) => {
   try {
     // Validate input using Zod schema
     const validatedData = loginInfoSchema.parse(data);
-    console.log("Validated Data:", validatedData);
+    console.log("✅ Validated Data:", validatedData);
 
     // Make API request
     const response = await axios.post("http://localhost:5000/login", validatedData, {
@@ -19,7 +19,14 @@ export const loginUser = async (prevState: any, formData: FormData) => {
     });
 
     if (response.data.success) {
-     
+      // Set HttpOnly cookie using `cookies()`
+      const cookieStore = await cookies();
+      cookieStore.set("Authorization", response.data.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
 
       return { success: "Login successful!", error: null };
     } else {

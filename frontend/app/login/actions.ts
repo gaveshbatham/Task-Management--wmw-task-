@@ -1,4 +1,5 @@
 import { loginInfoSchema } from "@/utils/formValidation";
+import axios from "axios";
 import { toast } from "sonner";
 
 export const  loginUser = async (formData: FormData): Promise<void> => {
@@ -9,17 +10,13 @@ export const  loginUser = async (formData: FormData): Promise<void> => {
     }
   
     try {
-      const validatedData = loginInfoSchema.parse(data);
+      const  validatedData = loginInfoSchema.parse(data);
   
-      const response = await fetch(`${process.env.NEXT_BACKEND_ROUTE}:${process.env.NEXT_BACKEND_PORT}/user/one/${data.email}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(validatedData),
+      const response = await axios.post('http://localhost:5000/login',validatedData,{
+        withCredentials: true
       })
-      
+      // if(!response.data.success){}
+      // console.log(response.data)
       return
     } catch (error: any) {
       const zodError = { ...error };

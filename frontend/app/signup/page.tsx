@@ -9,14 +9,14 @@ import { getValue } from "./actions";
 import Navbar from "@/components/Navbar";
 
 export default function Signup() {
-  type Role = "Admin" | "User";
+  type Role = "admin" | "user";
   
   type InputState = {
     photo?: File,
     role?: Role
   };
   const [showPassword, setShowPassword] = useState(false);
-  const [selected, setSelected] = useState<Role>("User");
+  const [selected, setSelected] = useState<Role>("user");
   const [input, setInput] = useState<InputState>({});
 
 
@@ -38,7 +38,7 @@ export default function Signup() {
           <div className="relative font-bold text-3xl text-center mb-4">Signup</div>
             <form className="space-y-4 flex flex-col items-center" action={getValue}>
               <div className="flex border border-gray-300 rounded-lg overflow-hidden mb-12 w-[9rem] self-center">
-                {(["Admin", "User"] as Role[]).map((role) => (
+                {(["admin", "user"] as Role[]).map((role) => (
                   <label
                     key={role}
                     className={`px-4 py-2 cursor-pointer ${

@@ -1,5 +1,7 @@
 "use client"; 
-import { useState, useTransition } from "react";
+import { useState , useTransition } from "react";
+import { useActionState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +18,8 @@ export default function Login() {
     photo?: File,
     role?: Role
   };
+  const [state, formAction] = useActionState(loginUser,{error:null,success:null});
+
   const [showPassword, setShowPassword] = useState(false);
   const [selected, setSelected] = useState<Role>("user");
   const [input, setInput] = useState<InputState>({});
@@ -30,7 +34,7 @@ export default function Login() {
         <div className="flex flex-col items-center justify-center max-w-7xl mx-auto my-auto">
           <div className="w-full min-w-sm max-w-md p-8 bg-white rounded-2xl shadow-lg">
             <div className="relative font-bold text-3xl text-center mb-4">Login</div>
-            <form className="space-y-4 flex flex-col items-center" action={loginUser}>  
+            <form className="space-y-4 flex flex-col items-center" action={formAction}>  
               <div className="flex border border-gray-300 rounded-lg overflow-hidden mb-12 w-[9rem] self-center">
                 {(["admin", "user"] as Role[]).map((role) => (
                   <label

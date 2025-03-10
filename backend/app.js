@@ -12,6 +12,10 @@ import {verify_email} from "./controller/verify.js"
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import {scheduler} from "./service/reminder.js"
 import cors from 'cors'
+import  {limiter} from './service/rateLimiter.js'
+
+
+app.use(limiter())
 
 
 dotenv.config();
@@ -27,6 +31,7 @@ const corsOptions = {
     allowedHeaders: "Content-Type,Authorization"
   };
 app.use(cors())
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
@@ -42,8 +47,7 @@ app.get("/verify/:token" , verify_email)
 
 app.use('/user', userRoute)
 app.use('/task' ,authMiddleware, taskRoute)
-// app.use('/user' , userRoute)
-// app.use('/task' , taskRoute)
+
 
 
 app.listen(PORT, ()=>{

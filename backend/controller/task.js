@@ -1,9 +1,13 @@
 import Task from "../model/task.js";
+import reminder from "../model/reminder.js";
 import jwt from "jsonwebtoken"
 import sendMail from "../service/nodeMailer.js";
+import Reminders from "../model/reminder.js";
+import {resetreminders_store} from "../service/reminder.js"
+
 
 async function add_new_task(req, res) {
-    const { title, description, dueDate, status, assignedTo, assignedBy } =
+    const { title, description, dueDate, status, assignedTo, assignedBy,reminder } =
       req.body;
 
       const token = req.cookies.Authorization;
@@ -23,11 +27,30 @@ async function add_new_task(req, res) {
         status: status || "pending",
         assignedTo,
         assignedBy,
+        reminder,
       });
   
       const savedTask = await newTask.save();
   
       res.status(201).json({ success: true, message: "Task added successfully", result: savedTask });
+
+      if(reminder ){
+        resetreminders_store()
+        const newReminder = new Reminders({
+          id_in_task: savedTask._id,
+          title,
+          description,
+          dueDate,
+          status: status || "pending",
+          assignedTo,
+          assignedBy,
+          important: false,
+          reminder, 
+        });
+  
+        newReminder.save();
+
+      }
 
       // Verify token and check role
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -48,7 +71,7 @@ async function add_new_task(req, res) {
   }
 
   async function update_task(req, res) {
-    const { _id, title, description, dueDate, status, assignedTo, assignedBy } = req.body;
+    const { _id, title, description, dueDate, status, assignedTo, assignedBy ,reminder } = req.body;
     const token=req.cookies.Authorization;
     
     if (!_id) {
@@ -59,7 +82,7 @@ async function add_new_task(req, res) {
       // Find the task by _id and update only the provided fields
       const updatedTask = await Task.findByIdAndUpdate(
         _id, 
-        { $set: { title, description, dueDate, status, assignedTo, assignedBy } },
+        { $set: { title, description, dueDate, status, assignedTo, assignedBy ,reminder } },
         { new: true } // Return updated document
       );
   
@@ -69,8 +92,19 @@ async function add_new_task(req, res) {
   
       res.json({ success: true, message: "Task updated successfully", result: updatedTask });
 
+      if (reminder) {
+        resetreminders_store()
+        Reminders.findOneAndUpdate(
+          { id_in_task:_id}, 
+          { $set: { title, description, dueDate, status, assignedTo, assignedBy, reminder } },
+          { new: true, upsert: true } 
+        );
+      }
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const updated_by = decoded.email;
+
+
 
       const data_for_email = {
         to: assignedTo, 
@@ -97,10 +131,7 @@ async function add_new_task(req, res) {
     }
   
     try {
-      // Verify token and get user details
-       // Extract email of the user who performed the deletion
-  
-      // Find the task before deleting to get details
+   
       const taskToDelete = await Task.findById(_id);
   
       if (!taskToDelete) {
@@ -111,6 +142,10 @@ async function add_new_task(req, res) {
       await Task.findByIdAndDelete(_id);
   
       res.json({ success: true, message: "Task deleted successfully", result: taskToDelete });
+
+      
+      resetreminders_store()
+      Reminders.findOneAndDelete({id_in_task:_id})
   
       // Send email notification to the assigned user
       const decoded = jwt.verify(token, process.env.JWT_SECRET);

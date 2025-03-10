@@ -10,7 +10,7 @@ import { login  } from './controller/login.js'
 import {verify_email} from "./controller/verify.js"
 
 import { authMiddleware } from "./middleware/authMiddleware.js";
-
+import {scheduler} from "./service/reminder.js"
 import cors from 'cors'
 
 
@@ -30,6 +30,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
+scheduler()
 
 app.get('/', (req,res)=>{
     res.send("<h1> this is from backend  </h1>") 

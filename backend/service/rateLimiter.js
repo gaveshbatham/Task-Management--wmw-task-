@@ -1,21 +1,17 @@
-import {rateLimit} from "express-rate-limit"
+import { rateLimit } from "express-rate-limit";
 
 const limiter = rateLimit({
-    windowMs:10 * 60 * 1000,
-    max:40,
-    message:{ success: false, message: "Request limit exceeded" }, 
+    windowMs: 10 * 60 * 1000,
+    max: 40, 
+    message: { success: false, message: "Request limit exceeded" },
     statusCode: 429,
-    standardHeaders: 'draft-8',
-    legacyHeaders: false,
-    keyGenerator: (req) => req.ip
+    standardHeaders: true, 
+    legacyHeaders: false, 
+    keyGenerator: (req) => req.ip , 
+});
 
+export { limiter };
 
-})
-
-
-export {
-    limiter
-}
 
 
 

@@ -15,7 +15,7 @@ import cors from 'cors'
 import  {limiter} from './service/rateLimiter.js'
 
 
-app.use(limiter())
+
 
 
 dotenv.config();
@@ -31,10 +31,10 @@ const corsOptions = {
     allowedHeaders: "Content-Type,Authorization"
   };
 app.use(cors())
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
+app.use(limiter)
 scheduler()
 
 app.get('/', (req,res)=>{

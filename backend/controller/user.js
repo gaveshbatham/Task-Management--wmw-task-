@@ -178,5 +178,49 @@ async function delete_user(req,res) {
     
 }
  
+async function get_one_by_token(req, res) {
+  const token = req.cookies.Authorization;
 
-export {add_user, get_one_user,get_all_users,update_user,delete_user}
+  // Check if token is provided
+  if (!token) {
+      return res.status(400).json({
+          success: false,
+          message: "Token not provided"
+      });
+  }
+
+  try {
+      // Verify the token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Find the user by decoded email
+      const data = await User.findOne({ email: decoded.email }).select("-password -_id");
+
+      // Check if user exists
+      if (!data) {
+          return res.status(404).json({
+              success: false,
+              message: "User not found",
+              result: null
+          });
+      }
+
+      // Return user data
+      return res.status(200).json({
+          success: true,
+          message: "User found",
+          result: data
+      });
+
+  } catch (error) {
+      console.error("Error getting user:", error);
+      return res.status(500).json({
+          success: false,
+          message: "Error getting user",
+          error: error.message
+      });
+  }
+}
+
+
+export {add_user, get_one_user,get_all_users,update_user,delete_user,get_one_by_token}

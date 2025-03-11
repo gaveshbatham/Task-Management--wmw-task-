@@ -10,6 +10,8 @@ async function add_new_task(req, res) {
     const { title, description, dueDate, status, assignedTo, assignedBy,reminder } =
       req.body;
 
+      
+
       const token = req.cookies.Authorization;
    
   
@@ -70,8 +72,11 @@ async function add_new_task(req, res) {
     }
   }
 
-  async function update_task(req, res) {
-    const { _id, title, description, dueDate, status, assignedTo, assignedBy ,reminder } = req.body;
+async function update_task(req, res) {
+    const {  title, description, dueDate, status, assignedTo, assignedBy ,reminder } = req.body;
+    const  _id_from_params  = req.params._id;
+    const  _id_from_body  = req.body._id;
+    const _id=_id_from_params||_id_from_body
     const token=req.cookies.Authorization;
     
     if (!_id) {

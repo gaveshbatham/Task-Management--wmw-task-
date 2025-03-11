@@ -5,6 +5,7 @@ import {
   get_all_users,
   update_user,
   delete_user,
+  get_one_by_token
 } from "../controller/user.js";
 import multer from "multer";
 
@@ -18,6 +19,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.get("/one/:email" ,authMiddleware,user_or_admin, get_one_user);
+router.get("/one/by_tokan" ,authMiddleware,user_or_admin, get_one_by_token);
 
 router.get("/get_all",authMiddleware,onlyAdmin, get_all_users);
 

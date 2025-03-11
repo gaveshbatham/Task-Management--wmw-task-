@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 
 import userRoute from './routers/user.js'
 import taskRoute from './routers/task.js'
-
+import authRouter from "./routers/auth.js"
 import { login  } from './controller/login.js'
 import {verify_email} from "./controller/verify.js"
 
@@ -42,9 +42,9 @@ app.get('/', (req,res)=>{
 })
 
 
-app.post("/login" , login )
-app.get("/verify/:token" , verify_email)
-
+// app.post("/login" , login )
+// app.get("/verify/:token" , verify_email)
+app.use('/auth',authRouter)
 app.use('/user', userRoute)
 app.use('/task' ,authMiddleware, taskRoute)
 

@@ -64,7 +64,7 @@ export default function Signup() {
       }
       const validatedData = signupInfoSchema.parse(formDataToSend)
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_ROUTE}/user/add`,
+        `${process.env.NEXT_PUBLIC_ROUTE}/auth/signup`,
         validatedData,
         {
           headers: {

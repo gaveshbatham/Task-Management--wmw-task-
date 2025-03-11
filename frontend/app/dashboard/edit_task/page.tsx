@@ -12,10 +12,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { User, UserState } from "@/redux/userSlice";
-import { useAppSelector } from "@/redux/hooks";
-import { MdEmail } from "react-icons/md";
 
-const AddTask = () => {
+const editTask = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -55,11 +53,11 @@ const AddTask = () => {
         }
       );
       
-      toast("Your task has been created successfully.",);
+      toast("Your task has been edited successfully.",);
       
       router.push('/dashboard/');
     } catch (error) {
-      toast("Failed to create task. Please try again.");
+      toast("Failed to edit task. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -70,7 +68,7 @@ const AddTask = () => {
       <Card className="max-w-2xl mx-auto">
         <CardContent className="pt-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Create your Task</h2>
+            <h2 className="text-2xl font-bold">Edit your Task</h2>
             <Link href="/dashboard/tasks">
               <Button variant="outline">Go to tasks</Button>
             </Link>
@@ -117,7 +115,7 @@ const AddTask = () => {
               className="w-full bg-blue-600 text-white"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating...' : 'Add task'}
+              {isLoading ? "Loading..." : "Edit task"}
             </Button>
           </form>
         </CardContent>
@@ -126,4 +124,4 @@ const AddTask = () => {
   );
 };
 
-export default AddTask;
+export default editTask;

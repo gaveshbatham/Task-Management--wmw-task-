@@ -1,58 +1,116 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@radix-ui/react-label'
-import { useActionState } from 'react'
-import { useSelector } from 'react-redux'
-import { editUser } from './action'
+"use client";
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import Link from 'next/link';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { UserState } from '@/redux/userSlice';
+import { editInfoSchema } from '@/utils/formValidation';
 
 const Profile = () => {
-  const user = useSelector((state:any) => state.user)
-  const [state, formAction] = useActionState(editUser,{error:null,success:null})
+  const user = useSelector((state: UserState) => state.user);
+  const [formData, setFormData] = useState({
+    name: user?.name,
+    email: user?.email,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    if(formData.name ==="" && formData.email === ""){
+      e.preventDefault()
+      toast("no input provided")
+    }
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_ROUTE}/user/update/${user?.email}`, 
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true
+        }
+      );
+      
+      toast("Your profile has been updated successfully.");
+    } catch (error) {
+      toast("Failed to update profile. Please try again.");
+      console.error("Profile update error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className='bg-gray flex flex-col items-center mt-7 w-full h-full'>
-    {/* Profile Section */}
-      <div className="flex items-center p-6 bg-white shadow rounded-t-md w-full max-w-xl">
-        {/* Profile Circle */}
-        <div className="flex-shrink-0">
-          <div className="h-20 w-20 rounded-full bg-teal-500 flex items-center justify-center">
-            <span className="text-white text-3xl font-medium">PH</span>
-          </div>
+    <div className="container mx-auto p-6">
+      <div className="flex flex-col md:flex-row items-center mb-8 gap-6">
+        <div className="w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
+          {user?.name?.substring(0, 2).toUpperCase() || 'WMW'}
         </div>
-    
-        {/* Profile Info */}
-        <div className="ml-6 flex-1">
-          <h2 className="text-2xl font-medium text-gray-800">{user.name}</h2>
-          <p className="text-gray-600">{user.email}</p>
+        
+        <div className="text-center md:text-left">
+          <h2 className="text-2xl font-bold">{user?.name}</h2>
+          <p className="text-gray-600">{user?.email}</p>
         </div>
-    
-        {/* Buttons */}
-        <div className="flex flex-col space-y-2 ml-4">
-          <button className="px-4 py-2 bg-blue-500 text-white rounded shadow-sm hover:bg-black transition">
-            Go to home
-          </button>
+
+        <div className="ml-auto">
+          <Link href="/dashboard/">
+            <Button className="bg-blue-600 text-white">Go to home</Button>
+          </Link>
         </div>
       </div>
     
-      {/* Form Section */}
-      <div className=' w-full max-w-xl bg-white shadow rounded-b-md p-8'>
-        <form className="space-y-4 flex flex-col items-center" action={formAction}>
-          <div className="w-[98%]">
-            <Label>Name</Label>
-            <Input placeholder="Your name here" name="name" />
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input 
+              type="text" 
+              id="name" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+            />
           </div>
-          <div className="w-[98%]">
-            <Label>Email</Label>
-            <Input type="email" placeholder="Example@gmail.com" name="email" />
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              type="email" 
+              id="email" 
+              name="email" 
+              value={formData.email} 
+              onChange={handleChange} 
+            />
           </div>
-          <div className='flex gap-4'>
-            <Button className='bg-blue-500'>Edit</Button>
-            <Button className='bg-white text-black border hover:bg-gray-300'>Go back</Button>
+          <div className="flex gap-2">
+            <Button 
+              type="submit" 
+              className="bg-blue-600 text-white"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Updating...' : 'Edit'}
+            </Button>
+            <Link href="/dashboard">
+              <Button type="button" variant="outline">Go back</Button>
+            </Link>
           </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

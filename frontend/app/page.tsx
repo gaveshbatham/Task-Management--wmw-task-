@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div>
-      <Navbar text= {<Button className="ml-4 bg-blue-600 text-white">Start Managing Your Tasks!</Button>}/>
+      <Navbar text= {<Link href="/signup"><Button className="ml-4 bg-blue-600 text-white">Start Managing Your Tasks!</Button></Link>}/>
       <main className="flex items-center justify-center gap-20 px-10 bg-[#00000000]">
         <div className="flex flex-col items-center justify-center py-20 w-[40%]">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">

@@ -16,7 +16,7 @@ async function add_new_task(req, res) {
       console.log(req.body)
     // Validate required fields
     if (!title || !dueDate || !assignedTo || !assignedBy) {
-      return res.status(400).json({ success: false, message: "Missing required fields" });
+      return res.json({ success: false, message: "Missing required fields" });
     }
   
     try {
@@ -191,6 +191,5 @@ async function add_new_task(req, res) {
         });
     }
 }
-  
 
 export { add_new_task , update_task , delete_task ,get_task_by_email };

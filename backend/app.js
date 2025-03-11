@@ -28,9 +28,10 @@ app.use(cookieParser());
 const corsOptions = {
     origin: [process.env.FRONTEND_LINK],
     methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization"
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true
   };
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 

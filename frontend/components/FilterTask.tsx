@@ -7,11 +7,10 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { useDispatch, useSelector } from 'react-redux';
-import { UserState } from '@/redux/userSlice';
-import { setTask } from '@/redux/taskSlice';
+import { useSelector } from 'react-redux';
+import { User, UserState } from '@/redux/userSlice';
 
-export interface Task {
+interface Task {
   _id: string;
   title: string;
   description: string;
@@ -20,20 +19,23 @@ export interface Task {
   createdAt: string;
 }
 
-const TasksPage = () => {
+interface TasksProps {
+  filteredTasks: any;
+}
+
+const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const user = useSelector((state: UserState) => state.user);
+  const email = useSelector((state: User) => state.email);
   const [popupTask, setPopupTask] = useState<Task | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch()
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${user?.email}`,
+          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -42,7 +44,6 @@ const TasksPage = () => {
           }
         );
         setTasks(response.data);
-        dispatch(setTask(response.data))
       } catch (error) {
         toast('Failed to load tasks. Please try again.');
       } finally {
@@ -51,7 +52,7 @@ const TasksPage = () => {
     };
 
     fetchTasks();
-  }, [toast, user?.email]);
+  }, [toast, email]);
 
   const handleCompleteTask = async (_Id: string) => {
     try {
@@ -67,11 +68,11 @@ const TasksPage = () => {
         }
       );
 
-      setTasks(tasks.map((task) =>
-        task._id === _Id
-          ? { ...task, status: 'completed' }
-          : task
-      ));
+      setTasks(
+        tasks.map((task) =>
+          task._id === _Id ? { ...task, status: 'completed' } : task
+        )
+      );
 
       toast('Task marked as completed successfully.');
     } catch (error) {
@@ -101,9 +102,12 @@ const TasksPage = () => {
 
   const getStatusColor = (status: Task['status']) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in-progress': return 'bg-red-100 text-red-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'in-progress':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
     }
   };
 
@@ -124,6 +128,8 @@ const TasksPage = () => {
     };
   }, []);
 
+  const tasksToRender = filteredTasks?.length > 0 ? filteredTasks : tasks;
+
   return (
     <div className="container mx-auto p-6 w-full">
       <div className="flex justify-between items-center mb-6">
@@ -137,7 +143,7 @@ const TasksPage = () => {
         <div className="flex justify-center py-10">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
         </div>
-      ) : tasks.length === 0 ? (
+      ) : tasksToRender.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-gray-500 mb-4">You don't have any tasks yet</p>
           <Link href="/dashboard/addtask">
@@ -146,20 +152,28 @@ const TasksPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-          {tasks.map((task) => (
+          {tasksToRender.map((task:any) => (
             <div key={task._id} className="relative">
               <Card onClick={(e) => handleTaskClick(task, e)}>
                 <CardContent className="p-6">
                   <div className="mb-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(task.status)}`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
+                        task.status
+                      )}`}
+                    >
                       {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                     </span>
                   </div>
                   <h3 className="font-medium text-lg mb-2">{task.title}</h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">{task.description}</p>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                    {task.description}
+                  </p>
                   <div className="text-xs text-gray-500">
                     <p>Due: {new Date(task.dueDate).toLocaleDateString()}</p>
-                    <p>Created: {formatDistanceToNow(new Date(task.createdAt))} ago</p>
+                    <p>
+                      Created: {formatDistanceToNow(new Date(task.createdAt))} ago
+                    </p>
                   </div>
                 </CardContent>
                 <CardFooter className="bg-gray-50 p-4 flex justify-between">
@@ -182,11 +196,14 @@ const TasksPage = () => {
                 <div
                   ref={popupRef}
                   className="absolute bg-white border rounded shadow-md p-4 z-10"
-                  style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                  style={{
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                  }}
                 >
                   <Button
                     onClick={() => {
-                      // Implement edit task logic here
                       toast('Edit task functionality goes here');
                     }}
                     variant="ghost"
@@ -211,4 +228,4 @@ const TasksPage = () => {
   );
 };
 
-export default TasksPage;
+export default FilterTask;

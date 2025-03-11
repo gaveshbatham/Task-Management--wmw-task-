@@ -13,7 +13,7 @@ const router=express.Router();
 router.get('/one/:email',user_or_admin,get_task_by_email )
 
 
-router.post('/add',assignedTo_check,upload.none(), add_new_task)
+router.post('/add',upload.none(), add_new_task)
 
 
 

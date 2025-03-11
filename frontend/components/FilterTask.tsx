@@ -26,7 +26,7 @@ interface TasksProps {
 const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const email = useSelector((state: User) => state.email);
+  const user = useSelector((state: UserState) => state.user);
   const [popupTask, setPopupTask] = useState<Task | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +35,7 @@ const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${email}`,
+          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${user?.user?.email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,7 +52,7 @@ const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
     };
 
     fetchTasks();
-  }, [toast, email]);
+  }, [toast]);
 
   const handleCompleteTask = async (_Id: string) => {
     try {

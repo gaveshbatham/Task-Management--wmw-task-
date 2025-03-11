@@ -31,6 +31,14 @@ export default function UserDetailPage({ params }: { params: { email: string } }
   const [user, setUser] = useState<User | null>(null);
   const [userTasks, setUserTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  // Modal input states
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [taskStatus, setTaskStatus] = useState<'pending' | 'in-progress' | 'completed'>('pending');
+  const [taskDueDate, setTaskDueDate] = useState('');
+
   const router = useRouter();
 
   useEffect(() => {
@@ -57,26 +65,42 @@ export default function UserDetailPage({ params }: { params: { email: string } }
   }, [params.email, process.env.NEXT_PUBLIC_ROUTE]);
 
   const handleAddTask = () => {
+    setShowModal(true); // Show the modal
+  };
+
+  const handleSubmitTask = async () => {
     if (!user) return;
 
-    const newTask: Omit<Task, "_id" | "createdAt"> = {
-      title: "New Task",
-      description: "Task description",
-      status: "pending",
-      dueDate: new Date(),
+    if (!taskTitle || !taskDescription || !taskDueDate) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const newTask = {
+      title: taskTitle,
+      description: taskDescription,
+      status: taskStatus,
+      dueDate: new Date(taskDueDate),
       assignedBy: "admin",
       assignedTo: user.email,
     };
 
-    axios
-      .post(`${process.env.NEXT_PUBLIC_ROUTE}/task/add`, newTask)
-      .then((response) => {
-        setUserTasks([...userTasks, response.data]);
-        toast.success("Task added successfully");
-      })
-      .catch((error) => {
-        toast.error("Failed to add task");
-      });
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/task/add`, newTask);
+      setUserTasks([...userTasks, response.data]);
+      toast.success("Task added successfully");
+      setShowModal(false);
+      resetModalFields();
+    } catch (error) {
+      toast.error("Failed to add task");
+    }
+  };
+
+  const resetModalFields = () => {
+    setTaskTitle('');
+    setTaskDescription('');
+    setTaskStatus('pending');
+    setTaskDueDate('');
   };
 
   if (isLoading) {
@@ -102,7 +126,7 @@ export default function UserDetailPage({ params }: { params: { email: string } }
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">User Details</h1>
         <div className="space-x-2">
@@ -190,7 +214,7 @@ export default function UserDetailPage({ params }: { params: { email: string } }
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {task.dueDate.toLocaleDateString()}
+                        {new Date(task.dueDate).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
@@ -200,6 +224,65 @@ export default function UserDetailPage({ params }: { params: { email: string } }
           )}
         </div>
       </div>
+
+      {/* Modal for Adding Task */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-bold mb-4">Add New Task</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium">Title</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={taskTitle}
+                  onChange={(e) => setTaskTitle(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Description</label>
+                <textarea
+                  className="w-full px-3 py-2 border rounded-md"
+                  rows={3}
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Due Date</label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={taskDueDate}
+                  onChange={(e) => setTaskDueDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Status</label>
+                <select
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={taskStatus}
+                  onChange={(e) => setTaskStatus(e.target.value as Task["status"])}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end space-x-2 mt-4">
+                <Button variant="outline" onClick={() => { setShowModal(false); resetModalFields(); }}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmitTask} className="bg-blue-600 text-white">
+                  Submit
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

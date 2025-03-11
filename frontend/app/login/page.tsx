@@ -44,7 +44,6 @@ export default function Login() {
     });
   };
   
-  const user = useAppSelector((state) => state.user.user)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -52,7 +51,7 @@ export default function Login() {
     try {
       // const validatedData = loginInfoSchema.parse(formData)
      
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/login`, formData,{
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/auth/login`, formData,{
         withCredentials:true
       })
       
@@ -67,8 +66,6 @@ export default function Login() {
         role: data.user.role,
         verified: data.user.verified
       }));
-
-      console.log(user)
       toast.success('Login successful!');
       
       router.push('/dashboard');

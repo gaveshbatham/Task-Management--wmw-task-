@@ -8,16 +8,9 @@ export async function  middleware(request: NextRequest){
     if(!hasCookie){
         return NextResponse.redirect( new URL("/signup", request.url))
     }
-//     if(user.role === "user"){
-//     const { pathname } = request.nextUrl;
-//     const blockedRoutes = ['/dashboard/users'];
-//       if (blockedRoutes.includes(pathname)) {
-//      return NextResponse.rewrite(new URL('/404', request.url));
-//   } 
-//  }
 return NextResponse.next()
 }
 
 export const config ={
-    matcher:['/dashboard', '/dashboard/Important', '/dashboard/assigned']
+    matcher:['/dashboard', '/dashboard/assigned']
 }

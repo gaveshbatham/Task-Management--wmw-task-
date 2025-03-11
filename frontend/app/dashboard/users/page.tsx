@@ -26,7 +26,7 @@ const UsersPage = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_ROUTE}/users/get_all`,
+          `${process.env.NEXT_PUBLIC_ROUTE}/user/get_all`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const UsersPage = () => {
     };
 
     fetchUsers();
-  }, [toast]);
+  }, []);
 
   return (
     <div className="container mx-auto p-6 w-full">

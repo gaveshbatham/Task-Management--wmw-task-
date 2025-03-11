@@ -2,13 +2,19 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
+export async function deleteAuthCookie() {
+  "use server"
+  const cookieStore = await cookies();
+  cookieStore.delete('Authorization');
+}
+
 export async function handleLogout() {
 
   try{
     await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/auth/logout`,{
         withCredentials: true
     });
-    (await cookies()).delete("Authorization")
+    deleteAuthCookie()
     console.log('User logged out on server');
     return {success: true}
   }

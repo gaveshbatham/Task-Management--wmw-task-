@@ -62,10 +62,10 @@ export default function Signup() {
       if (profilePhoto) {
         formDataToSend.append("photo", profilePhoto);
       }
-      const validatedData = signupInfoSchema.parse(formDataToSend)
+      // const validatedData = signupInfoSchema.parse(formDataToSend)
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_ROUTE}/auth/signup`,
-        validatedData,
+        formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data'
@@ -77,18 +77,18 @@ export default function Signup() {
         toast.success(response.data.message || "Signup successful. Please check your email for verification.");
         router.push('/login');
       } else {
-        toast.error(response.data.message || "Something went wrong");
+        toast(response.data.message || "Something went wrong");
       }
     } catch (error:any) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Error during signup");
+        toast(error.response?.data?.message || "Error during signup");
       }
       if (error.name === "ZodError") {
         const pull = error.issues.map((err: any) => err.message)
         toast(pull) 
       }
       else {
-        toast.error("An unexpected error occurred");
+        toast("An unexpected error occurred");
       }
     } finally {
       setLoading(false);
@@ -114,7 +114,6 @@ export default function Signup() {
       <div className="flex flex-col items-center justify-center max-w-7xl mx-auto my-auto">
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
           <div className="relative font-bold text-3xl text-center mb-4">Signup</div>
-          {/* Show error message if any */}
           <form className="space-y-4 flex flex-col items-center" onSubmit={handleSubmit}>
             <div className="flex border border-gray-300 rounded-lg overflow-hidden mb-12 w-[9rem] self-center">
               {(["admin", "user"] as Role[]).map((role) => (

@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -10,8 +8,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
-import { UserState } from '@/redux/userSlice';
-import { setTask } from '@/redux/taskSlice';
+import { User, UserState } from '@/redux/userSlice';
 import { redirect } from 'next/navigation';
 
 export interface Task {
@@ -21,6 +18,8 @@ export interface Task {
   dueDate: string;
   status: 'pending' | 'completed' | 'in-progress';
   createdAt: string;
+  assignedTo: string;
+  assignedBy: string
 }
 
 const TasksPage = () => {
@@ -28,9 +27,7 @@ const TasksPage = () => {
   const [loading, setLoading] = useState(true);
   const [popupTask, setPopupTask] = useState<Task | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 2;
 
@@ -41,8 +38,9 @@ const TasksPage = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
+        const email = localStorage.getItem('email')
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/idcoursera9@gmail.com`,
+          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -50,9 +48,8 @@ const TasksPage = () => {
             withCredentials: true
           }
         );
-
+        console.log("tasks:", response.data)
         setTasks(response.data.result);
-        dispatch(setTask(response.data));
       } catch (error) {
         toast('Failed to load tasks. Please try again.');
       } finally {
@@ -61,7 +58,7 @@ const TasksPage = () => {
     };
 
     fetchTasks();
-  }, [toast, dispatch]);
+  }, []);
 
   const handleCompleteTask = async (_Id: string) => {
     try {

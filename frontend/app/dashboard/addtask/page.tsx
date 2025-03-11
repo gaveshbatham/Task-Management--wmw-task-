@@ -25,17 +25,17 @@ const AddTask = () => {
     assignedTo: "",
     assignedBy: ""
   });
-  const user= useSelector((state:UserState) => state.user)
+  const user= useSelector((state:any) => state.user.user)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const email:any = user?.user?.email
+    const email:any = user?.email;
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
       assignedTo: email,
       assignedBy: email
     });
-    
+    console.log(formData)
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

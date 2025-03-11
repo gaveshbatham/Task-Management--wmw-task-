@@ -26,16 +26,17 @@ interface TasksProps {
 const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const user = useSelector((state: UserState) => state.user);
+  const userDetails = useSelector((state: any) => state.user.user);
   const [popupTask, setPopupTask] = useState<Task | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
+      console.log( "email:", userDetails )
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${user?.user?.email}`,
+          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${userDetails?.email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,12 +53,12 @@ const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
     };
 
     fetchTasks();
-  }, [toast]);
+  }, []);
 
   const handleCompleteTask = async (_Id: string) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(
+      await axios.put(
         `${process.env.NEXT_PUBLIC_ROUTE}/task/update/${_Id}`,
         { status: 'completed' },
         {
@@ -128,7 +129,11 @@ const FilterTask: React.FC<TasksProps> = ({ filteredTasks }) => {
     };
   }, []);
 
-  const tasksToRender = filteredTasks?.length > 0 ? filteredTasks : tasks;
+  const tasksToRender: Task[] = Array.isArray(filteredTasks) && filteredTasks.length > 0
+  ? filteredTasks
+  : Array.isArray(tasks)
+    ? tasks
+    : []
 
   return (
     <div className="container mx-auto p-6 w-full">

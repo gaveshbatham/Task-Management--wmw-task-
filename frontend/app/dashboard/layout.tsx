@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { handleLogout } from "./action";
+import { redirect } from "next/navigation";
 
 export default function DashboardLayout({
     children,
@@ -12,11 +13,12 @@ export default function DashboardLayout({
   }) {
     const onLogoutClick = async () => {
       try {
-        const result = await handleLogout(); // server action call
+        localStorage.clear()
+        const result = await handleLogout();
+        
         if (result.success) {
-          alert('Logged out successfully!'); // ✅ Browser alert
-          // Optionally, redirect to login page:
-          window.location.href = '/login';
+          alert('Logged out successfully!'); 
+          redirect('/login');
         } else {
           toast('Logout failed!');
         }

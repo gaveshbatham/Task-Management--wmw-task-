@@ -13,7 +13,7 @@ import { setUser, User, UserState } from "../../redux/userSlice";
 import { toast } from "sonner";
 import axios from "axios";
 import { loginInfoSchema } from "@/utils/formValidation";
-import { useAppSelector } from "@/redux/hooks";
+
 
 export default function Login() {
   type Role = "admin" | "user";
@@ -49,14 +49,17 @@ export default function Login() {
     setLoading(true);
     
     try {
-      // const validatedData = loginInfoSchema.parse(formData)
+      const validatedData = loginInfoSchema.parse(formData)
      
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/auth/login`, formData,{
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/auth/login`, validatedData,{
         withCredentials:true
       })
       
       const data = response.data;
       localStorage.setItem('token', data.token);
+      localStorage.setItem('email', data.user.email)
+      localStorage.setItem('role', data.user.role)
+      localStorage.setItem('name', data.user.name)
       console.log(data.user)
       dispatch(setUser({
         _id:data.user._id,

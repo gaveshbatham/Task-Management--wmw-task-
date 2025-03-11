@@ -23,10 +23,9 @@ const editTask = () => {
     assignedTo: "",
     assignedBy: ""
   });
-  const user= useSelector((state:UserState) => state.user)
+  const email = localStorage.getItems('email')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const email:any = user?.user?.email
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,

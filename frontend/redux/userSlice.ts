@@ -10,11 +10,11 @@ export interface User {
 }
 
 export interface UserState {
-  user: User| null;
+  user:User | null;
 }
 
 const initialState: UserState = {
-  user: null
+  user:null
 };
 
 const userSlice = createSlice({
@@ -34,10 +34,6 @@ const userSlice = createSlice({
         };
       }
     },
-
-    // clearUser: (state) => {
-    //   state.user = ;
-    // },
   },
 });
 

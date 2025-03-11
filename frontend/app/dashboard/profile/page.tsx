@@ -12,10 +12,11 @@ import { UserState } from '@/redux/userSlice';
 import { editInfoSchema } from '@/utils/formValidation';
 
 const Profile = () => {
-  const user = useSelector((state: UserState) => state.user);
+  const name = localStorage.getItem('name');
+  const email = localStorage.getItem('email')
   const [formData, setFormData] = useState({
-    name: user?.name,
-    email: user?.email,
+    name: name,
+    email:email,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +36,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${process.env.NEXT_PUBLIC_ROUTE}/user/update/${user?.email}`, 
+        `${process.env.NEXT_PUBLIC_ROUTE}/user/update/${email}`, 
         formData,
         {
           headers: {
@@ -58,12 +59,12 @@ const Profile = () => {
     <div className="container mx-auto p-6">
       <div className="flex flex-col md:flex-row items-center mb-8 gap-6">
         <div className="w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-          {user?.name?.substring(0, 2).toUpperCase() || 'WMW'}
+          {name?.substring(0, 2).toUpperCase() || 'WMW'}
         </div>
         
         <div className="text-center md:text-left">
-          <h2 className="text-2xl font-bold">{user?.name}</h2>
-          <p className="text-gray-600">{user?.email}</p>
+          <h2 className="text-2xl font-bold">{name}</h2>
+          <p className="text-gray-600">{email}</p>
         </div>
 
         <div className="ml-auto">

@@ -54,7 +54,6 @@ const page = () => {
       const incompleteTasks = tasks.filter(task => task.status !== 'completed');
       setFilteredTasks(incompleteTasks);
     } else {
-      // Reset to show all tasks
       setFilteredTasks(tasks);
     }
   };
@@ -62,6 +61,7 @@ const page = () => {
   const handleCompleteTask = async (_Id: string) => {
     try {
       const token = localStorage.getItem('token');
+      const email = localStorage.getItem('email')
       await axios.patch(
         `${process.env.NEXT_PUBLIC_ROUTE}/task/update/${_Id}`,
         { status: 'completed' },
@@ -79,7 +79,7 @@ const page = () => {
 
       setTasks(
         updatedTasks
-          .filter((task: any) => task.assignedTo !== user?.user?.email)
+          .filter((task: any) => task.assignedTo !== email)
           .map((task: any) => ({
             ...task,
             status: task.status as 'pending' | 'completed' | 'in-progress'
@@ -87,7 +87,7 @@ const page = () => {
       );
       setFilteredTasks(
         updatedTasks
-          .filter((task: any) => task.assignedTo !== user?.user?.email)
+          .filter((task: any) => task.assignedTo !== email)
           .map((task: any) => ({
             ...task,
             status: task.status as 'pending' | 'completed' | 'in-progress'
@@ -129,8 +129,9 @@ const page = () => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem('token');
+        const email = localStorage.getItem('email')
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${user?.user?.email}`,
+          `${process.env.NEXT_PUBLIC_ROUTE}/task/one/${email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -140,7 +141,7 @@ const page = () => {
         );
         const resp = response.data;
 
-        const userTasks = resp.filter((task: Task) => task.assignedTo === user?.user?.email);
+        const userTasks = resp.filter((task: Task) => task?.assignedTo === email);
 
         setTasks(userTasks);
         setFilteredTasks(userTasks);
@@ -163,7 +164,7 @@ const page = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [user?.user?.email]);
+  }, []);
 
   const getStatusColor = (status: Task['status']) => {
     switch (status) {

@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface Task {
+export interface Task {
     _id: number;
     title: string;
     description: string;
     status: "pending" | "in-progress" | "completed"; 
     dueDate: string; 
     assignedBy: string;
+    assignedTo: string;
+    createdAt: string;
 }
 
-interface TaskState {
+export interface TaskState {
     tasks: Task[];
 }
 
@@ -31,13 +33,34 @@ const taskSlice = createSlice({
             }
         },
         removeTask: (state, action: PayloadAction<number>) => {
-            state.tasks = state.tasks.filter((_, i) => i !== action.payload);  // _id
+            state.tasks = state.tasks.filter((task) => task._id !== action.payload)
         },
-        setTasks: (state, action: PayloadAction<Task[]>) => {
+        setTask: (state, action: PayloadAction<Task[]>) => {
             state.tasks = action.payload;
-        }
+        },
+        sortTasks: (state, action: PayloadAction<"Due" | "Created" | "Completed" | "Incomplete">) => {
+            const sortBy = action.payload;
+        switch (sortBy) {
+            case "Due":
+              state.tasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+              break;
+            case "Created":
+              if (state.tasks[0]?.createdAt) {
+                state.tasks.sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
+              }
+              break;
+            case "Completed":
+              state.tasks = state.tasks.filter((task) => task.status === "completed");
+              break;
+            case "Incomplete":
+              state.tasks = state.tasks.filter((task) => task.status !== "completed");
+              break;
+            default:
+              break;
+          }
     }
-});
+  }
+})
 
-export const { addTask, updateTask, removeTask, setTasks } = taskSlice.actions;
+export const { addTask, updateTask, removeTask, setTask, sortTasks } = taskSlice.actions;
 export default taskSlice.reducer;

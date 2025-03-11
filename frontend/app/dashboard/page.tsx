@@ -1,3 +1,4 @@
+"use client"
 import { Main } from '@/components/Main'
 import Navbar from '@/components/Navbar'
 import  Sidebar  from '@/components/Sidebar'

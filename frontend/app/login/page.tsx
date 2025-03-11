@@ -1,105 +1,184 @@
 "use client"; 
-import { useEffect, useState , useTransition } from "react";
-import { useActionState } from "react";
 
+import { useState } from "react";
+import { redirect, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { loginUser } from "./actions";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, UserState } from "../../redux/userSlice"
+import { setUser, User, UserState } from "../../redux/userSlice";
+import { toast } from "sonner";
+import axios from "axios";
+import { loginInfoSchema } from "@/utils/formValidation";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function Login() {
   type Role = "admin" | "user";
   
-  type InputState = {
-    role?: Role
-  };
-  const [state, formAction] = useActionState(loginUser,{error:null,success:null});
-
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [selected, setSelected] = useState<Role>("user");
-  const [input, setInput] = useState<InputState>({});
-
-  const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput({ ...input,[e.target.name] : e.target.value });
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "user" as Role
+  });3
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ 
+      ...formData, 
+      [e.target.name]: e.target.value 
+    });
   };
   
-  const dispatch = useDispatch()
-  const user = useSelector((state: UserState) => state.user)
-  useEffect(() => {
-    if(state.success){
-      console.log(state.user)
-    }
-    if(state.user){
+  const handleRoleChange = (role: Role) => {
+    setSelected(role);
+    setFormData({
+      ...formData,
+      role
+    });
+  };
+  
+  const user = useAppSelector((state) => state.user.user)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      // const validatedData = loginInfoSchema.parse(formData)
+     
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/login`, formData,{
+        withCredentials:true
+      })
+      
+      const data = response.data;
+      localStorage.setItem('token', data.token);
+      console.log(data.user)
+      dispatch(setUser({
+        _id:data.user._id,
+        name:data.user.name,
+        email: data.user.email,
+        password: data.user.password,
+        role: data.user.role,
+        verified: data.user.verified
+      }));
+
       console.log(user)
+      toast.success('Login successful!');
+      
+      router.push('/dashboard');
+      
+    } catch (error:any) {
+      if (error.name === "ZodError") {
+        const pull = error.issues.map((err: any) => err.message)
+        toast(pull)
+      }
+      toast.error(error instanceof Error ? error.message : 'Login failed');
+    } finally {
+      setLoading(false);
     }
-  },[state])
+  };
+  
+  const handleCancel = () => {
+    router.push('/');
+  };
 
   return (
-    <div className=" flex flex-col gap-12 bg-[#f3f2f2] min-h-screen">
-      <Navbar text={<Button className="ml-4 bg-blue-600 text-white">Go back</Button>}/>
-        <div className="flex flex-col items-center justify-center max-w-7xl mx-auto my-auto">
-          <div className="w-full min-w-sm max-w-md p-8 bg-white rounded-2xl shadow-lg">
-            <div className="relative font-bold text-3xl text-center mb-4">Login</div>
-            <form className="space-y-4 flex flex-col items-center" action={formAction}>  
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden mb-12 w-[9rem] self-center">
-                {(["admin", "user"] as Role[]).map((role) => (
-                  <label
-                    key={role}
-                    className={`px-4 py-2 cursor-pointer ${
-                      selected === role ? "bg-blue-600 text-white" : "bg-white text-gray-600"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="role"
-                      value={role}
-                      checked={selected === role}
-                      onChange={() => setSelected(role)}
-                      className="hidden"
-                    />
-                    {role}
-                  </label>
-                ))}
-              </div>
-              <div className="w-[98%]">
-                <Label>Email</Label>
-                <Input type="email" placeholder="Example@gmail.com" name="email" onChange={changeEventHandler} />
-              </div>
-              <div className="w-[98%]">
-                <Label>Password</Label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter password here"
-                    name="password"
-                    onChange={changeEventHandler}
-                  />
-                  <span
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500">
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </span>
-                </div>
-              </div>
-              <Button className="w-full bg-blue-500" type="submit">
-                Login
-              </Button>
-            </form>
-            <div className="text-center mt-4">
-              <Link href="/"><Button variant="outline" className="w-full">
-                Cancel
-              </Button></Link>
-            </div>
-            <p className="text-center text-sm mt-4">
-              <Link href="#" className="text-blue-600">Forgot Password?</Link>
-            </p>
-          </div>
+    <div className="flex flex-col gap-12 bg-[#f3f2f2] min-h-screen">
+      <Navbar text={
+        <div className="flex">
+          <Button 
+          className="ml-4 bg-blue-600 text-white"
+          onClick={() => redirect('/signup')}
+        >Signup</Button>
+        <Button 
+          className="ml-4 bg-blue-600 text-white"
+          onClick={() => router.back()}
+        >Go back</Button>
         </div>
+      }/>
+      <div className="flex flex-col items-center justify-center max-w-7xl mx-auto my-auto">
+        <div className="w-full min-w-sm max-w-md p-8 bg-white rounded-2xl shadow-lg">
+          <div className="relative font-bold text-3xl text-center mb-4">Login</div>
+          <form className="space-y-4 flex flex-col items-center" onSubmit={handleSubmit}>  
+            <div className="flex border border-gray-300 rounded-lg overflow-hidden mb-12 w-[9rem] self-center">
+              {(["admin", "user"] as Role[]).map((role) => (
+                <label
+                  key={role}
+                  className={`px-4 py-2 cursor-pointer ${
+                    selected === role ? "bg-blue-600 text-white" : "bg-white text-gray-600"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="role"
+                    value={role}
+                    checked={selected === role}
+                    onChange={() => handleRoleChange(role)}
+                    className="hidden"
+                  />
+                  {role}
+                </label>
+              ))}
+            </div>
+            <div className="w-[98%]">
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                id="email"
+                type="email" 
+                placeholder="Example@gmail.com" 
+                name="email" 
+                value={formData.email}
+                onChange={handleChange} 
+                required
+              />
+            </div>
+            <div className="w-[98%]">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter password here"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500">
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
+              </div>
+            </div>
+            <Button 
+              className="w-full bg-blue-500" 
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </Button>
+          </form>
+          <div className="text-center mt-4">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+          </div>
+          <p className="text-center text-sm mt-4">
+            <Link href="/forgot-password" className="text-blue-600">Forgot Password?</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

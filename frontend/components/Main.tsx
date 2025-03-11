@@ -47,7 +47,7 @@ export const Main = () => {
     );
     setFilteredTasks(filtered);
   };
-
+  
   return (
     <main className="flex-1 p-10 py-4 max-w-[77.5rem]">
       <h1 className="text-3xl font-semibold">My Day</h1>

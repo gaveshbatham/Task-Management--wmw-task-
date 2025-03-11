@@ -1,10 +1,11 @@
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { useSelector } from "react-redux";
 
-export function middleware(request: NextRequest){
-    const token = (localStorage:Storage) => localStorage?.getItem('token')
-
-    if(!token){
+export async function  middleware(request: NextRequest){
+    const cookieStore = await cookies()
+    const hasCookie = cookieStore.has("Authorization")
+    if(!hasCookie){
         return NextResponse.redirect( new URL("/signup", request.url))
     }
 //     if(user.role === "user"){
@@ -14,6 +15,7 @@ export function middleware(request: NextRequest){
 //      return NextResponse.rewrite(new URL('/404', request.url));
 //   } 
 //  }
+return NextResponse.next()
 }
 
 export const config ={

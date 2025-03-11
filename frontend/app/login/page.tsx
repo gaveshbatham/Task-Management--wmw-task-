@@ -50,9 +50,9 @@ export default function Login() {
     setLoading(true);
     
     try {
-      const validatedData = loginInfoSchema.parse(formData)
+      // const validatedData = loginInfoSchema.parse(formData)
      
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/login`, validatedData,{
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_ROUTE}/login`, formData,{
         withCredentials:true
       })
       

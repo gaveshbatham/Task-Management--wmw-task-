@@ -16,39 +16,8 @@ async function add_new_task(req, res) {
       console.log(req.body)
     // Validate required fields
     if (!title || !dueDate || !assignedTo || !assignedBy) {
-      return res.status(400).json({ success: false, message: "Missing required fields" });
+      return res.json({ success: false, message: "Missing required fields" });
     }
-    
-
-    const today = new Date();
-today.setHours(0, 0, 0, 0);
-
-
-// Convert dueDate to a date-only format
-const dueDateOnly = new Date(dueDate);
-dueDateOnly.setHours(0, 0, 0, 0);
-
-if (dueDateOnly < today) {
-    return res.status(400).json({ 
-        success: false, 
-        message: "Cannot set a due date earlier than today." 
-    });
-}
-
-// Convert reminder to a date-only format (if provided)
-if (reminder) {
-    const reminderOnly = new Date(reminder);
-    reminderOnly.setHours(0, 0, 0, 0);
-
-    if (reminderOnly < today) {
-        return res.status(400).json({ 
-            success: false, 
-            message: "Cannot set a reminder earlier than today." 
-        });
-    }
-}
-  
-
   
     try {
       const newTask = new Task({
@@ -102,11 +71,7 @@ if (reminder) {
   }
 
   async function update_task(req, res) {
-    const {  title, description, dueDate, status, assignedTo, assignedBy ,reminder } = req.body;
-    const  _id_from_params = req.params._id;
-    const  _id_from_boy = req.body._id;
-    const _id=_id_from_params||_id_from_boy
-    
+    const { _id, title, description, dueDate, status, assignedTo, assignedBy ,reminder } = req.body;
     const token=req.cookies.Authorization;
     
     if (!_id) {

@@ -49,7 +49,7 @@ function user_or_admin(req, res, next) {
 }
 
 
-async function findBy_id(req,res,next){
+function findBy_id(req,res,next){
     const token = req.cookies.Authorization; // Extract token
     const { _id } = req.params;
 
@@ -64,8 +64,7 @@ async function findBy_id(req,res,next){
             return next();
         }
 
-        const task=await Task.findById({_id})
-
+        const task= Task.findById({_id})
         if(task.assignedTo === decoded.email){
             return next();
         }else{

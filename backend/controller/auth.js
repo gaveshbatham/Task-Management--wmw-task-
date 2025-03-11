@@ -5,6 +5,8 @@ import sandMail from "../service/nodeMailer.js";
 
 import useragent from "useragent";
 
+
+
 export async function login(req, res) {
   const { email, password } = req.body;
 
@@ -152,7 +154,7 @@ export async function signup(req,res){
     };
     
     // Send email
-    sendMail(emailContent);
+    sandMail(emailContent);
 
     res.status(201).json({ success: true, message: "User created successfully. Please check your email for verification." });
 

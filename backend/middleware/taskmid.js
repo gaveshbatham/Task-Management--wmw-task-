@@ -50,7 +50,7 @@ function user_or_admin(req, res, next) {
 
 
 function findBy_id(req,res,next){
-    const token = req.header("Authorization")?.split(" ")[0]; // Extract token
+    const token = req.cookies.Authorization; // Extract token
     const { _id } = req.params;
 
     if (!token) {

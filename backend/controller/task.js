@@ -96,7 +96,13 @@ async function add_new_task(req, res) {
         resetreminders_store()
         Reminders.findOneAndUpdate(
           { id_in_task:_id}, 
-          { $set: { title, description, dueDate, status, assignedTo, assignedBy, reminder } },
+          { $set: { title: updatedTask.title,
+            description: updatedTask.description,
+            dueDate: updatedTask.dueDate,
+            status: updatedTask.status,
+            assignedTo: updatedTask.assignedTo,
+            assignedBy: updatedTask.assignedBy,
+            reminder: updatedTask.reminder } },
           { new: true, upsert: true } 
         );
       }
@@ -107,7 +113,7 @@ async function add_new_task(req, res) {
 
 
       const data_for_email = {
-        to: assignedTo, 
+        to: updatedTask.assignedTo, 
         subject: "Task Updated: " + (title || "No Title Provided"),
         text: `Hello,\n\nThe following task assigned to you has been updated by ${updated_by}:\n\n📝 **Task:** ${title || "No Title"}\n📅 **Due Date:** ${new Date(dueDate).toLocaleString()}\n📌 **Status:** ${status || "No Status"}\n\n🔹 **Updated Description:**\n${description || "No description provided"}\n\nPlease check the task details and take necessary action.\n\nBest,\nTask Management Team`
       };
@@ -131,6 +137,8 @@ async function add_new_task(req, res) {
     }
   
     try {
+      resetreminders_store()
+      Reminders.findOneAndDelete({id_in_task:_id})
    
       const taskToDelete = await Task.findById(_id);
   
@@ -144,8 +152,7 @@ async function add_new_task(req, res) {
       res.json({ success: true, message: "Task deleted successfully", result: taskToDelete });
 
       
-      resetreminders_store()
-      Reminders.findOneAndDelete({id_in_task:_id})
+      
   
       // Send email notification to the assigned user
       const decoded = jwt.verify(token, process.env.JWT_SECRET);

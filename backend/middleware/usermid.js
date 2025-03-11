@@ -24,7 +24,7 @@ function onlyAdmin(req, res, next) {
 
 function user_or_admin(req, res, next) {
     const token = req.cookies.Authorization; // Extract token
-    const { email } = req.params; // Get email from request params
+    const { email } = req.body; // Get email from request params
 
     if (!token) {
         return res.status(401).json({ success: false, message: "No token provided" });

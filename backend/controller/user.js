@@ -164,7 +164,7 @@ async function delete_user(req,res) {
     }
     try{
 
-        const result = User.findOneAndDelete({email});
+        const result =await User.findOneAndDelete({email});
 
         res.json(
             {success: true, message: "user deleted", result }
@@ -172,6 +172,7 @@ async function delete_user(req,res) {
 
 
     }catch (error) {
+      console.error("Error deleting user:", error);
         res.status(500).json({success: false, message: "Error deleting user", error: error.message });
       }
     

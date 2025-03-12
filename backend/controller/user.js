@@ -192,9 +192,10 @@ async function get_one_by_token(req, res) {
   try {
       // Verify the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+      console.log("token decoded --->", decoded)
+      const email=decoded.email
       // Find the user by decoded email
-      const data = await User.findOne({ email: decoded.email }).select("-password -_id");
+      const data = await User.findOne({ email }).select("-password -_id");
 
       // Check if user exists
       if (!data) {

@@ -19,7 +19,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.get("/one/:email" ,authMiddleware,user_or_admin, get_one_user);
-router.get("/one/by_tokan" ,authMiddleware,user_or_admin, get_one_by_token);
+router.get("/get_by_tokan" ,authMiddleware,user_or_admin, get_one_by_token);
 
 router.get("/get_all",authMiddleware,onlyAdmin, get_all_users);
 
